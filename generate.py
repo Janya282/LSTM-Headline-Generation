@@ -3,7 +3,7 @@ import json
 
 import torch
 
-from data import Vocab, tokenize, PAD, SOS, EOS, load_gigaword_splits
+from data import Vocab, tokenize, PAD, SOS, EOS, load_split
 from model import Encoder, Decoder, Seq2Seq
 
 
@@ -40,15 +40,15 @@ def generate_headline(model, vocab, text, device, beam_width=1, max_len=20):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--checkpoint", type=str, required=True)
+    ap.add_argument("--data_dir", type=str, default="data")
     ap.add_argument("--beam_width", type=int, default=4)
-    ap.add_argument("--max_test", type=int, default=2000)
     ap.add_argument("--out_file", type=str, default="predictions.jsonl")
     args = ap.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model, vocab, model_args = load_model(args.checkpoint, device)
 
-    _, _, test_pairs = load_gigaword_splits(max_train=1, max_val=1, max_test=args.max_test)
+    test_pairs = load_split(os.path.join(args.data_dir, "test.jsonl"))
 
     with open(args.out_file, "w") as f:
         for src_toks, tgt_toks in test_pairs:

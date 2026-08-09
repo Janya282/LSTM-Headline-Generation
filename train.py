@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 
-from data import build_vocab, collate_fn, HeadlineDataset, load_gigaword_splits, PAD, SOS, EOS
+from data import build_vocab, collate_fn, HeadlineDataset, load_gigaword_splits, load_split, PAD, SOS, EOS
 from model import Encoder, Decoder, Seq2Seq
 
 
@@ -49,6 +49,8 @@ def main():
     ap.add_argument("--max_train", type=int, default=200000)
     ap.add_argument("--max_val", type=int, default=5000)
     ap.add_argument("--max_test", type=int, default=2000)
+    ap.add_argument("--data_dir", type=str, default="data",
+                    help="Use frozen val/test splits from preprocess.py if present")
     ap.add_argument("--teacher_forcing", type=float, default=0.5)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out_dir", type=str, default="checkpoints")
@@ -60,9 +62,20 @@ def main():
     print(f"Device: {device}")
 
     print("Loading Gigaword splits ...")
-    train_pairs, val_pairs, test_pairs = load_gigaword_splits(
+    train_pairs, _, _ = load_gigaword_splits(
         max_train=args.max_train, max_val=args.max_val, max_test=args.max_test, seed=args.seed)
-    print(f"train={len(train_pairs)} val={len(val_pairs)} test={len(test_pairs)}")
+
+    # Use the frozen validation split from preprocess.py if it exists.
+    val_path = os.path.join(args.data_dir, "val.jsonl")
+    if os.path.exists(val_path):
+        val_pairs = load_split(val_path)
+        print(f"Using frozen val split: {len(val_pairs)} examples")
+    else:
+        val_pairs = load_gigaword_splits(
+            max_train=1, max_val=args.max_val, max_test=1, seed=args.seed)[1]
+        print(f"Frozen val split not found, using fresh val: {len(val_pairs)} examples")
+    test_pairs = []  # test is not used during training
+    print(f"train={len(train_pairs)} val={len(val_pairs)}")
 
     vocab = build_vocab(train_pairs, max_size=args.vocab_size)
     print(f"Vocab size: {len(vocab)}")

@@ -1,3 +1,5 @@
+import json
+import os
 import random
 import re
 from collections import Counter
@@ -95,6 +97,23 @@ def collate_fn(batch, pad_idx=0):
     tgt_pad = tgt_pad[sort_idx]
     tgt_lens = tgt_lens[sort_idx]
     return src_pad, src_lens, tgt_pad, tgt_lens
+
+
+def load_split(path):
+    """Load a JSONL split saved by preprocess.py -> list of (source, target)."""
+    pairs = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            ex = json.loads(line)
+            pairs.append((ex["source"], ex["target"]))
+    return pairs
+
+
+def load_frozen_splits(data_dir="data"):
+    """Load frozen val/test splits + vocab saved by preprocess.py."""
+    val_pairs = load_split(os.path.join(data_dir, "val.jsonl"))
+    test_pairs = load_split(os.path.join(data_dir, "test.jsonl"))
+    return val_pairs, test_pairs
 
 
 def load_gigaword_splits(max_train=200000, max_val=5000, max_test=2000, seed=42):

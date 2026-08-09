@@ -100,3 +100,12 @@ __all__ = [
     "dataset_info",
     "prepare_data",
 ]
+
+
+if __name__ == "__main__":
+    train, val, test, vocab = prepare_data()
+    print("dataset_info:", dataset_info())
+    print(
+        f"Ready. frozen val/test saved to data/. train={len(train)} "
+        f"val={len(val)} test={len(test)} vocab={len(vocab)}"
+    )
