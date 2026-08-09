@@ -28,7 +28,8 @@ Training saves the best model to `checkpoints/best_model.pt`. Generate makes hea
 
 ## Note on the dataset
 
-The `gigaword` dataset on HuggingFace seemed broken so I loaded `walzen/gigaword` instead - same data, different mirror. Its columns are named `article`/`summary`, which the code auto detects.
+- The `gigaword` dataset on HuggingFace seemed broken so I loaded `walzen/gigaword` instead - same data, different mirror. Its columns are named `article`/`summary`, which the code auto detects.
+- Don't commit the checkpoint file (checkpoints/best_model.pt). It's over 100MB and GitHub will reject the push with a "file size limit" error. .gitignore already excludes the checkpoints/ folder, __pycache__/, and predictions.jsonl, so as long as you don't force-add them, git will skip them automatically. Please and thank you!
 
 ## Test run so far
 
