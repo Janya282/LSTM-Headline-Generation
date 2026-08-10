@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 
 import torch
 
@@ -43,12 +44,19 @@ def main():
     ap.add_argument("--data_dir", type=str, default="data")
     ap.add_argument("--beam_width", type=int, default=4)
     ap.add_argument("--out_file", type=str, default="predictions.jsonl")
+    ap.add_argument("--limit", type=int, default=None,
+                     help="Only decode the first N test examples (e.g. 100, to match "
+                          "the LLM baseline's evaluation set for a fair side-by-side).")
     args = ap.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model, vocab, model_args = load_model(args.checkpoint, device)
 
     test_pairs = load_split(os.path.join(args.data_dir, "test.jsonl"))
+    if args.limit is not None:
+        test_pairs = test_pairs[: args.limit]
+    print(f"Generating predictions for {len(test_pairs)} test examples "
+          f"(limit={args.limit})")
 
     with open(args.out_file, "w") as f:
         for src_toks, tgt_toks in test_pairs:
