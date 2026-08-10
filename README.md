@@ -33,7 +33,7 @@ Training saves the best model to `checkpoints/best_model.pt`. Generate makes hea
 
 ## Test run so far
 
-Trained 1 epoch on 5,000 examples on CPU (~5.5 min). Loss went from ~9 to ~7. ROUGE-1 was 0.065, ROUGE-2 was 0.008 - low because it's barely trained. Predictions were mostly repeating "#" (the token used for all numbers in this dataset) instead of real words, which is a classic sign of an undertrained model, not a bug.
+Trained 1 epoch on 5,000 examples on CPU (~5.5 min). Loss went from ~9 to ~7. ROUGE-1 was 0.065, ROUGE-2 was 0.008 - low because it's barely trained. Predictions were mostly repeating "#" (the token used for all numbers in this dataset) instead of real words.
 
 ## Still need to fill in (Ravi)
 
