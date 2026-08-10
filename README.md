@@ -34,12 +34,3 @@ Training saves the best model to `checkpoints/best_model.pt`. Generate makes hea
 ## Test run so far
 
 Trained 1 epoch on 5,000 examples on CPU (~5.5 min). Loss went from ~9 to ~7. ROUGE-1 was 0.065, ROUGE-2 was 0.008 - low because it's barely trained. Predictions were mostly repeating "#" (the token used for all numbers in this dataset) instead of real words.
-
-## Still need to fill in (Ravi)
-
-- Full training run numbers (epochs, data size, final loss)
-- Param count and training time (printed when you run train.py)
-- What hardware it ran on
-- Final ROUGE scores
-- 10 example outputs for the report
-- Error types seen (repetition, unknown words, etc.)
