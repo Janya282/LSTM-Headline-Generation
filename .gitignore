@@ -1,4 +1,6 @@
 checkpoints/
 __pycache__/
 *.pyc 
-predictions.jsonl
+predictions.jsonl.env
+.env
+.env
