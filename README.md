@@ -8,11 +8,17 @@ LSTM encoder decoder with attention, built from scratch in PyTorch, trained on G
 pip install -r requirements.txt
 ```
 
-## Run it
+## Run it (3 hour version of complete training - produces results discussed in report)
 
 ```
 python train.py --epochs 3 --max_train 50000 --max_val 2000 --max_test 500 --batch_size 64
 python generate.py --checkpoint checkpoints/best_model.pt --beam_width 4
+python evaluate.py --predictions predictions.jsonl
+```
+## Run it (2-3 min version used for demo video - results included in appendix)
+```
+python train.py --epochs 1 --max_train 2000 --max_val 500 --max_test 100 --batch_size 64
+python generate.py --checkpoint checkpoints/best_model.pt --beam_width 4 --limit 100
 python evaluate.py --predictions predictions.jsonl
 ```
 
