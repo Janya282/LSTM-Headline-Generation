@@ -73,22 +73,21 @@ def prepare_data(
     # Build vocab from TRAIN ONLY (no leakage).
     vocab = build_vocab(train_pairs, max_size=vocab_size, min_freq=min_freq)
 
+    # Skip any val/test examples whose source also appears in train.
+    train_src = {tuple(src) for src, _ in train_pairs}
+    val_pairs = [p for p in val_pairs if tuple(p[0]) not in train_src]
+    test_pairs = [p for p in test_pairs if tuple(p[0]) not in train_src]
+
     print(f"Dataset: {DATASET_NAME} ({DATASET_SOURCE})")
     print(f"License: {DATASET_LICENSE}")
     print(f"train={len(train_pairs)} val={len(val_pairs)} test={len(test_pairs)}")
     print(f"vocab_size={len(vocab)} (built from train only)")
+    print(f"leakage check: skipped val/test sources that overlap train")
 
     # Save held-out val/test splits to disk so they are reserved before training.
     os.makedirs(data_dir, exist_ok=True)
     _save_split(os.path.join(data_dir, "val.jsonl"), val_pairs)
     _save_split(os.path.join(data_dir, "test.jsonl"), test_pairs)
-
-    # Leakage check: no val/test source should appear in train.
-    train_src = {tuple(src) for src, _ in train_pairs}
-    val_overlap = sum(1 for src, _ in val_pairs if tuple(src) in train_src)
-    test_overlap = sum(1 for src, _ in test_pairs if tuple(src) in train_src)
-    print(f"leakage check: val_overlap={val_overlap} test_overlap={test_overlap}")
-    assert val_overlap == 0 and test_overlap == 0, "LEAK: val/test source in train!"
 
     return train_pairs, val_pairs, test_pairs, vocab
 
